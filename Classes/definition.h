@@ -1,0 +1,6 @@
+#pragma once
+
+enum TAB_NUM
+{
+	NONE, ACCOUNT, CHARACTER, ITEM, DUNGEON, TAB_NUM
+};
