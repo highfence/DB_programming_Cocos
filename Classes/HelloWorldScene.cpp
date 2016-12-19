@@ -28,7 +28,6 @@ bool HelloWorld::init()
     }
     
 	m_pWindowRenderer = WindowRenderer::create();
-	m_pWindowRenderer->DrawBasicWindow();
 	addChild(m_pWindowRenderer);
 
     return true;
