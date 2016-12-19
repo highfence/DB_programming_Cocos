@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "windowRenderer.h"
+#include "TabAccount.h"
+
 
 bool WindowRenderer::init()
 {
@@ -8,8 +10,10 @@ bool WindowRenderer::init()
 		return false;
 	}
 
+	setCurrentTabNum(TAB_NUM::NONE);
 	DrawBasicWindow();
 	DrawTabs();
+	DrawCurrentTab();
 
 	scheduleUpdate();
 	return true;
@@ -67,6 +71,17 @@ bool WindowRenderer::DrawTabs()
 	return true;
 }
 
+bool WindowRenderer::DrawCurrentTab()
+{
+	if (getCurrentTabNum() == TAB_NUM::ACCOUNT)
+	{
+		m_pTabAccount = TabAccount::create();
+		addChild(m_pTabAccount);
+	}
+
+	return true;
+}
+
 void WindowRenderer::menuCloseCallback(Ref* pSender)
 {
 	Director::getInstance()->end();
@@ -74,16 +89,24 @@ void WindowRenderer::menuCloseCallback(Ref* pSender)
 
 void WindowRenderer::changeToAccountTab(Ref * pSender)
 {
+	setCurrentTabNum(TAB_NUM::ACCOUNT);
+	DrawCurrentTab();
 }
 
 void WindowRenderer::changeToCharacterTab(Ref * pSender)
 {
+	setCurrentTabNum(TAB_NUM::CHARACTER);
+	DrawCurrentTab();
 }
 
 void WindowRenderer::changeToItemTab(Ref * pSender)
 {
+	setCurrentTabNum(TAB_NUM::ITEM);
+	DrawCurrentTab();
 }
 
 void WindowRenderer::changeToDungeonTab(Ref * pSender)
 {
+	setCurrentTabNum(TAB_NUM::DUNGEON);
+	DrawCurrentTab();
 }

@@ -1,6 +1,8 @@
 #pragma once
 
-class WindowRenderer : public Node
+class TabAccount;
+
+class WindowRenderer : public cocos2d::Node
 {
 public : 
 	CREATE_FUNC(WindowRenderer);
@@ -12,6 +14,7 @@ public :
 	CC_SYNTHESIZE(Sprite*, m_pBasicWindow, BasicWindow);
 	CC_SYNTHESIZE(MenuItemImage*, m_pCloseButton, CloseButton);
 	CC_SYNTHESIZE(Menu*, m_pCloseMenu, CloseMenu);
+	CC_SYNTHESIZE(int, m_pCurrentTabNum, CurrentTabNum);
 
 	// Tabs
 	CC_SYNTHESIZE(MenuItemImage*, m_pAccountTab, AccountTab);
@@ -20,10 +23,11 @@ public :
 	CC_SYNTHESIZE(MenuItemImage*, m_pDungeonTab, DungeonTab);
 	CC_SYNTHESIZE(Menu*, m_pTabMenu, TabMenu);
 
+
 	// Member Functions
 	bool DrawBasicWindow();
 	bool DrawTabs();
-
+	bool DrawCurrentTab();
 	
 	// Call back Functions
     void menuCloseCallback(Ref* pSender);
@@ -33,6 +37,6 @@ public :
 	void changeToDungeonTab(Ref* pSender);
 	
 
-
 private :
+	TabAccount* m_pTabAccount;
 };
