@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "windowRenderer.h"
 #include "TabAccount.h"
+#include "TabCharacter.h"
 
 
 bool WindowRenderer::init()
@@ -15,15 +16,32 @@ bool WindowRenderer::init()
 	DrawTabs();
 	DrawCurrentTab();
 
+	// Tab setting
+	m_pTabAccount = TabAccount::create();
+	m_pTabAccount->setVisible(false);
+	addChild(m_pTabAccount);
+
+	m_pTabCharacter = TabCharacter::create();
+	m_pTabCharacter->setVisible(false);
+	addChild(m_pTabCharacter);
+
 	scheduleUpdate();
 	return true;
 }
 
+void WindowRenderer::update(const float dt)
+{
+	if (CheckCallFunctions())
+	{
+		m_pTabCharacter->GetSellectedWithCharacterId(m_pTabAccount->getCallCharacterId());
+	}
+	return;
+}
+
 bool WindowRenderer::DrawBasicWindow()
 {
-
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	const auto visibleSize = Director::getInstance()->getVisibleSize();
+	const auto origin = Director::getInstance()->getVisibleOrigin();
 
 	// backgrond
 	auto Background = Sprite::create("Background.png");
@@ -49,15 +67,15 @@ bool WindowRenderer::DrawBasicWindow()
 
 bool WindowRenderer::DrawTabs()
 {
+	const auto visibleSize = Director::getInstance()->getVisibleSize();
+	const auto origin = Director::getInstance()->getVisibleOrigin();
 	m_pAccountTab = MenuItemImage::create("Tabs/Account_Normal.png", "Tabs/Account_Selected.png", CC_CALLBACK_1(WindowRenderer::changeToAccountTab, this));
 	m_pCharacterTab = MenuItemImage::create("Tabs/Character_Normal.png", "Tabs/Character_Selected.png", CC_CALLBACK_1(WindowRenderer::changeToCharacterTab, this));
 	m_pItemTab = MenuItemImage::create("Tabs/Item_Normal.png", "Tabs/Item_Selected.png", CC_CALLBACK_1(WindowRenderer::changeToItemTab, this));
 	m_pDungeonTab = MenuItemImage::create("Tabs/Dungeon_Normal.png", "Tabs/Dungeon_Selected.png", CC_CALLBACK_1(WindowRenderer::changeToDungeonTab, this));
 
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	auto originSize = Director::getInstance()->getVisibleOrigin();
 	float h = visibleSize.height - 71;
-	float TabX = originSize.x + m_pAccountTab->getContentSize().width / 2;
+	float TabX = origin.x + m_pAccountTab->getContentSize().width / 2;
 
 	m_pAccountTab->setPosition(Vec2(TabX, h));
 	m_pCharacterTab->setPosition(Vec2(m_pAccountTab->getPosition().x + 163, h));
@@ -75,8 +93,11 @@ bool WindowRenderer::DrawCurrentTab()
 {
 	if (getCurrentTabNum() == TAB_NUM::ACCOUNT)
 	{
-		m_pTabAccount = TabAccount::create();
-		addChild(m_pTabAccount);
+		m_pTabAccount->setVisible(true);
+	}
+	if (getCurrentTabNum() == TAB_NUM::CHARACTER)
+	{
+		m_pTabCharacter->setVisible(true);
 	}
 
 	return true;
@@ -89,12 +110,16 @@ void WindowRenderer::menuCloseCallback(Ref* pSender)
 
 void WindowRenderer::changeToAccountTab(Ref * pSender)
 {
+	m_pTabAccount->setVisible(false);
+	m_pTabCharacter->setVisible(false);
 	setCurrentTabNum(TAB_NUM::ACCOUNT);
 	DrawCurrentTab();
 }
 
 void WindowRenderer::changeToCharacterTab(Ref * pSender)
 {
+	m_pTabAccount->setVisible(false);
+	m_pTabCharacter->setVisible(false);
 	setCurrentTabNum(TAB_NUM::CHARACTER);
 	DrawCurrentTab();
 }
@@ -109,4 +134,14 @@ void WindowRenderer::changeToDungeonTab(Ref * pSender)
 {
 	setCurrentTabNum(TAB_NUM::DUNGEON);
 	DrawCurrentTab();
+}
+
+bool WindowRenderer::CheckCallFunctions()
+{
+	if (m_pTabAccount->getCallFlag())
+	{
+		return true;
+	}
+
+	return false;
 }

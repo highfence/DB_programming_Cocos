@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "TabAccount.h"
 
-auto visibleSize = Director::getInstance()->getVisibleSize();
-auto origin = Director::getInstance()->getVisibleOrigin();
 
 bool TabAccount::init()
 {
@@ -14,6 +12,7 @@ bool TabAccount::init()
 	my_account = new account;
 	my_account->accountExist = false;
 	my_characters = new std::vector<character*>;
+	setCallFlag(false);
 
 	drawSearchingBox();
 
@@ -40,6 +39,8 @@ void TabAccount::update(float dt)
 
 bool TabAccount::drawSearchingBox()
 {
+	const auto visibleSize = Director::getInstance()->getVisibleSize();
+	const auto origin = Director::getInstance()->getVisibleOrigin();
 	// 검색창 구현
 	m_pBattleTagBox = EditBox::create(Size(200, 46), "box.png");
 	m_pBattleTagBox->setPosition(Vec2(origin.x + m_pBattleTagBox->getContentSize().width / 2 + 5, 620));
@@ -131,6 +132,7 @@ int TabAccount::AccountQuery()
 				my_account->accountExist = true;
 				break;
 			}
+			else break;
 		}
 	}
 	else
@@ -138,7 +140,7 @@ int TabAccount::AccountQuery()
 	
 	std::wstring addStirng2;
 	addStirng2.assign(BattleTag.begin(), BattleTag.end());
-	std::wstring inputString2 = L"select c.character_id, c.class_type, c.class_level, c.play_time from instance_character AS c INNER JOIN account_has_character AS a ON(a.character_id = c.character_id)	WHERE a.battle_tag =" + addStirng;
+	std::wstring inputString2 = L"select c.character_id, c.class_type, c.class_level, c.play_time from instance_character AS c INNER JOIN account_has_character AS a ON(a.character_id = c.character_id)	WHERE a.battle_tag =" + addStirng2;
 	const wchar_t *inputWChar2 = inputString2.c_str();
 	ret = SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt);
 	ret = SQLExecDirect(hStmt, (SQLWCHAR*)inputWChar2, SQL_NTS);
@@ -158,7 +160,7 @@ int TabAccount::AccountQuery()
 			if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 				SQLGetData(hStmt, 1, SQL_C_ULONG, &my_character->id, 0, &iIdLen);
 				SQLGetData(hStmt, 2, SQL_C_WCHAR, my_character->classType, 40, &iClassTypeLen);
-				SQLGetData(hStmt, 3, SQL_C_WCHAR, &my_character->level, 0, &iLevelLen);
+				SQLGetData(hStmt, 3, SQL_C_ULONG, &my_character->level, 0, &iLevelLen);
 				SQLGetData(hStmt, 4, SQL_C_WCHAR, my_character->playTime, 40, &iPlayTimeLen);
 
 				// TODO :: NULL 문자가 들어가는 이유 찾고 해결하기. (메모리상 손해)
@@ -288,12 +290,35 @@ bool TabAccount::drawData()
 	vector<character*>::iterator iter = my_characters->begin();
 	for (int i = 0; ; ++i)
 	{
+		// TODO :: 캐릭터 버튼 생성.
+		auto button = MenuItemImage::create("line_Normal.png", "line_Selected.png", CC_CALLBACK_1(TabAccount::gotoCharaterStatus, this, my_characters->at(i)->id));
+		auto buttonMenu = Menu::create(button, NULL);
+		buttonMenu->setPosition(Vec2(wideBox->getPosition().x, levelTitle->getPosition().y - 50 * (i + 1)));
+		addChild(buttonMenu);
+
 		char buf[40];
 		sprintf(buf, "%d", my_characters->at(i)->id);
 		auto idLabel = Label::createWithTTF(buf, TTF, 20);
 		idLabel->setColor(ccc3(255, 0, 0));
 		idLabel->setPosition(idTitle->getPosition() - Vec2(0, 50 * (i + 1)));
 		addChild(idLabel);
+
+		auto classLabel = Label::createWithTTF(my_characters->at(i)->classType, TTF, 20);
+		classLabel->setColor(ccc3(255, 0, 0));
+		classLabel->setPosition(classTitle->getPosition() - Vec2(0, 50 * (i + 1)));
+		addChild(classLabel);
+
+		auto playtimeLabel = Label::createWithTTF(my_characters->at(i)->playTime, TTF, 20);
+		playtimeLabel->setColor(ccc3(255, 0, 0));
+		playtimeLabel->setPosition(playtimeTitle->getPosition() - Vec2(0, 50 * (i + 1)));
+		addChild(playtimeLabel);
+
+		sprintf(buf, "%d", my_characters->at(i)->level);
+		auto levelLabel = Label::createWithTTF(buf, TTF, 20);
+		levelLabel->setColor(ccc3(255, 0, 0));
+		levelLabel->setPosition(levelTitle->getPosition() - Vec2(0, 50 * (i + 1)));
+		addChild(levelLabel);
+
 
 		++iter;
 		if (iter == my_characters->end()) break;
@@ -321,5 +346,13 @@ void TabAccount::deleteNulls(char* destChar, int maxLength)
 		beforeInt = destChar[i];
 	}
 
+	return;
+}
+
+void TabAccount::gotoCharaterStatus(Ref* pSender, int character_id)
+{
+	this->setVisible(false);
+	setCallFlag(true);
+	setCallCharacterId(character_id);
 	return;
 }

@@ -1,51 +1,55 @@
 #pragma once
 using namespace ui;
 
-typedef struct account
-{
-	bool accountExist;
-	int battleTag;
-	char name[20];
-	char email[50];
-	char region[10];
-	int blockedDay;
-};
-
-typedef struct character
+typedef struct character_s
 {
 	bool characterExist;
 	int id;
 	char classType[40];
 	int level;
-	char playTime[40];
+	int strength;
+	int agility;
+	int intellect;
+	int hp;
+	int mp;
 };
 
-class TabAccount : public Node
+typedef struct item
+{
+	int id;
+	char name[40];
+	int attackPoint;
+	float drop_chance;
+	char wearingClass[40];
+};
+
+class TabCharacter : public Node
 {
 public:
-	CREATE_FUNC(TabAccount);
+	CREATE_FUNC(TabCharacter);
 	virtual bool init() override;
 	virtual void update(float) override;
 
 	bool drawSearchingBox();
 	bool drawData();
 
-	EditBox* m_pBattleTagBox;
+	EditBox* m_pCharacterIdBox;
 	Label* m_pTypedTag;
 	CC_SYNTHESIZE(MenuItemImage*, m_pFindButton, FindButton);
 	CC_SYNTHESIZE(Menu*, m_pButtonMenu, ButtonMenu);
 	CC_SYNTHESIZE(bool, m_CallFlag, CallFlag);
 	CC_SYNTHESIZE(int, m_CallCharacterId, CallCharacterId);
 
-	std::string BattleTag;
-	std::string AccountName;
+	std::string Character_id;
+	std::string CharacterName;
 
 	void GetTextFromEditBox(Ref* pSendor);
-	int AccountQuery();
+	int CharacterQuery();
 	void deleteNulls(char*, int);
-	void gotoCharaterStatus(Ref*, int);
+	void gotoItemStatus(Ref*, int);
+	void GetSellectedWithCharacterId(int);
 
-	account* my_account;
-	std::vector<character*>* my_characters;
+	character_s* my_character;
+	vector<item*>* my_items;
 };
 

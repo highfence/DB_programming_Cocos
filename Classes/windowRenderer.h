@@ -1,6 +1,7 @@
 #pragma once
 
 class TabAccount;
+class TabCharacter;
 
 class WindowRenderer : public cocos2d::Node
 {
@@ -8,7 +9,8 @@ public :
 	CREATE_FUNC(WindowRenderer);
 
 	/* Basic Functions */
-	virtual bool init();
+	virtual bool init() override;
+	virtual void update(const float) override;
 
 	// Member variables
 	CC_SYNTHESIZE(Sprite*, m_pBasicWindow, BasicWindow);
@@ -28,6 +30,7 @@ public :
 	bool DrawBasicWindow();
 	bool DrawTabs();
 	bool DrawCurrentTab();
+	bool CheckCallFunctions();
 	
 	// Call back Functions
     void menuCloseCallback(Ref* pSender);
@@ -39,4 +42,5 @@ public :
 
 private :
 	TabAccount* m_pTabAccount;
+	TabCharacter* m_pTabCharacter;
 };
