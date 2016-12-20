@@ -10,6 +10,7 @@ USING_NS_CC;
 #include <iostream>
 #include <Windows.h>
 #include <tchar.h>
+#include <vector>
 using namespace std;
 #include <sql.h>
 #include <sqlext.h>

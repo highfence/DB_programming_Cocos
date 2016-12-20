@@ -3,6 +3,7 @@ using namespace ui;
 
 typedef struct account
 {
+	bool accountExist;
 	int battleTag;
 	char name[20];
 	char email[50];
@@ -10,16 +11,27 @@ typedef struct account
 	int blockedDay;
 };
 
+typedef struct character
+{
+	bool characterExist;
+	int id;
+	char classType[40];
+	int level;
+	char playTime[40];
+};
+
 class TabAccount : public Node
 {
 public:
 	CREATE_FUNC(TabAccount);
-	virtual bool init();
+	virtual bool init() override;
+	virtual void update(float) override;
 
-	bool drawComponent();
+	bool drawSearchingBox();
 	bool drawData();
 
 	EditBox* m_pBattleTagBox;
+	Label* m_pTypedTag;
 	CC_SYNTHESIZE(MenuItemImage*, m_pFindButton, FindButton);
 	CC_SYNTHESIZE(Menu*, m_pButtonMenu, ButtonMenu);
 
@@ -27,8 +39,10 @@ public:
 	std::string AccountName;
 
 	void GetTextFromEditBox(Ref* pSendor);
-	int Query();
+	int AccountQuery();
+	void deleteNulls(char*, int);
 
 	account* my_account;
+	std::vector<character*>* my_characters;
 };
 
