@@ -428,9 +428,10 @@ void TabCharacter::deleteNulls(char* destChar, int maxLength)
 }
 
 
-void TabCharacter::gotoItemStatus(Ref* pSender, int character_id)
+void TabCharacter::gotoItemStatus(Ref* pSender, int item_id)
 {
 	this->setVisible(false);
 	setCallFlag(true);
+	setCallItemId(item_id);
 	return;
 }

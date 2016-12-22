@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "TabAccount.h"
 
-
+// TabAccount 초기화 함수.
 bool TabAccount::init()
 {
 	if (!Node::init())

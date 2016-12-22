@@ -38,6 +38,7 @@ public:
 	CC_SYNTHESIZE(MenuItemImage*, m_pFindButton, FindButton);
 	CC_SYNTHESIZE(Menu*, m_pButtonMenu, ButtonMenu);
 	CC_SYNTHESIZE(bool, m_CallFlag, CallFlag);
+	CC_SYNTHESIZE(int, m_CallItemId, CallItemId);
 	CC_SYNTHESIZE(bool, m_IsCharaterTabCalled, IsCharacterTabCalled);
 	CC_SYNTHESIZE(bool, m_IsNeedRefresh, IsNeedRefresh);
 

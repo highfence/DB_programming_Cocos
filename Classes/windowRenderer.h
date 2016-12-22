@@ -1,7 +1,13 @@
 #pragma once
 
+/*
+	WindowRenderer
+	기본 윈도우를 그려주고 Tab들을 가지고 관리해주는 클래스.
+*/
+
 class TabAccount;
 class TabCharacter;
+class TabItem;
 
 class WindowRenderer : public cocos2d::Node
 {
@@ -30,8 +36,10 @@ public :
 	bool DrawBasicWindow();
 	bool DrawTabs();
 	bool DrawCurrentTab();
-	bool CheckCallFunctions();
-	
+	int CheckCallFunctions();
+	void ChangeTabAccountToCharacter();
+	void ChangeTabCharacterToItem();
+
 	// Call back Functions
     void menuCloseCallback(Ref* pSender);
 	void changeToAccountTab(Ref* pSender);
@@ -43,4 +51,5 @@ public :
 private :
 	TabAccount* m_pTabAccount;
 	TabCharacter* m_pTabCharacter;
+	TabItem* m_pTabItem;
 };
