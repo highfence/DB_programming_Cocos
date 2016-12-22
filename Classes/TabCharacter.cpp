@@ -8,6 +8,9 @@ bool TabCharacter::init()
 	{
 		return false;
 	}
+
+	setIsNeedRefresh(false);
+	setIsCharacterTabCalled(false);
 	
 	my_character = new character_s;
 	my_character->characterExist = false;
@@ -64,10 +67,25 @@ bool TabCharacter::drawSearchingBox()
 
 void TabCharacter::GetTextFromEditBox(Ref* pSendor)
 {
-	Character_id = m_pCharacterIdBox->getText();
+	if (getIsCharacterTabCalled())
+	{
+		setIsCharacterTabCalled(false);
+	}
+	else
+	{
+		Character_id = m_pCharacterIdBox->getText();
+	}
 
 	if (!Character_id.empty())
 	{
+		if (getIsNeedRefresh())
+		{
+			auto temporarySaver = Character_id;
+			this->removeAllChildren();
+			my_items->clear();
+			Character_id = temporarySaver;
+			drawSearchingBox();
+		}
 		CharacterQuery();
 
 		if (my_character->characterExist)
@@ -194,7 +212,10 @@ int TabCharacter::CharacterQuery()
 bool TabCharacter::drawData()
 {
 	char inputStr[50];
-	
+
+
+
+
 	// Box »ý¼º
 	auto idBox = Sprite::create("resultBox.png");
 	idBox->setPosition(m_pCharacterIdBox->getPosition() + Vec2(250, 0));
@@ -380,6 +401,8 @@ bool TabCharacter::drawData()
 		if (iter == my_items->end()) break;
 	}
 
+	setIsNeedRefresh(true);
+
 	return true;
 }
 
@@ -409,22 +432,5 @@ void TabCharacter::gotoItemStatus(Ref* pSender, int character_id)
 {
 	this->setVisible(false);
 	setCallFlag(true);
-	setCallCharacterId(character_id);
 	return;
-}
-
-void TabCharacter::GetSellectedWithCharacterId(int inputId)
-{
-	this->setVisible(true);
-	Character_id = inputId;
-
-	if (!Character_id.empty())
-	{
-		CharacterQuery();
-
-		if (my_character->characterExist)
-		{
-			drawData();
-		}
-	}
 }

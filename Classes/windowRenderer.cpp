@@ -33,7 +33,13 @@ void WindowRenderer::update(const float dt)
 {
 	if (CheckCallFunctions())
 	{
-		m_pTabCharacter->GetSellectedWithCharacterId(m_pTabAccount->getCallCharacterId());
+		char buf[10];
+		sprintf(buf, "%d", m_pTabAccount->getCallCharacterId());
+		m_pTabCharacter->Character_id = buf;
+		m_pTabCharacter->setVisible(true);
+		m_pTabCharacter->setIsCharacterTabCalled(true);
+		m_pTabCharacter->GetTextFromEditBox(m_pTabCharacter);
+		m_pTabAccount->setCallFlag(false);
 	}
 	return;
 }

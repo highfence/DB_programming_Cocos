@@ -8,10 +8,14 @@ bool TabAccount::init()
 	{
 		return false;
 	}
-	
+
+	setIsNeedRefresh(false);
+
 	my_account = new account;
 	my_account->accountExist = false;
 	my_characters = new std::vector<character*>;
+	accountLabels = new cocos2d::Vector<cocos2d::Label*>;
+
 	setCallFlag(false);
 
 	drawSearchingBox();
@@ -67,6 +71,14 @@ void TabAccount::GetTextFromEditBox(Ref* pSendor)
 
 	if (!BattleTag.empty())
 	{
+		if (getIsNeedRefresh())
+		{
+			auto temporarySaver = BattleTag;
+			this->removeAllChildren();
+			my_characters->clear();
+			BattleTag = temporarySaver;
+			drawSearchingBox();
+		}
 		AccountQuery();
 
 		if (my_account->accountExist)
@@ -75,7 +87,7 @@ void TabAccount::GetTextFromEditBox(Ref* pSendor)
 		}
 	}
 
-	return;
+		return;
 }
 
 
@@ -137,7 +149,7 @@ int TabAccount::AccountQuery()
 	}
 	else
 		printf("An error occured during excuting query!! \n");
-	
+
 	std::wstring addStirng2;
 	addStirng2.assign(BattleTag.begin(), BattleTag.end());
 	std::wstring inputString2 = L"select c.character_id, c.class_type, c.class_level, c.play_time from instance_character AS c INNER JOIN account_has_character AS a ON(a.character_id = c.character_id)	WHERE a.battle_tag =" + addStirng2;
@@ -189,6 +201,7 @@ bool TabAccount::drawData()
 {
 	char inputStr[50];
 
+
 	// Box 积己
 	auto battleTagBox = Sprite::create("resultBox.png");
 	battleTagBox->setPosition(m_pBattleTagBox->getPosition() + Vec2(250, 0));
@@ -211,31 +224,37 @@ bool TabAccount::drawData()
 	addChild(blockedDayBox);
 
 	// 郴侩 积己.
+
 	sprintf(inputStr, "%d", my_account->battleTag);
 	auto battleTagLabel = Label::createWithTTF(inputStr, TTF, 20);
 	battleTagLabel->setPosition(battleTagBox->getPosition());
 	battleTagLabel->setColor(ccc3(0, 0, 0));
+	accountLabels->pushBack(battleTagLabel);
 	addChild(battleTagLabel);
 
 	auto nameLabel = Label::createWithTTF(my_account->name, TTF, 20);
 	nameLabel->setPosition(nameBox->getPosition());
 	nameLabel->setColor(ccc3(0, 0, 0));
+	accountLabels->pushBack(nameLabel);
 	addChild(nameLabel);
 
 	auto emailLabel = Label::createWithTTF(my_account->email, TTF, 20);
 	emailLabel->setPosition(emailBox->getPosition());
 	emailLabel->setColor(ccc3(0, 0, 0));
+	accountLabels->pushBack(emailLabel);
 	addChild(emailLabel);
-	
+
 	auto regionLabel = Label::createWithTTF(my_account->region, TTF, 20);
 	regionLabel->setPosition(regionBox->getPosition());
 	regionLabel->setColor(ccc3(0, 0, 0));
+	accountLabels->pushBack(regionLabel);
 	addChild(regionLabel);
 
 	sprintf(inputStr, "%d", my_account->blockedDay);
 	auto blockedDayLabel = Label::createWithTTF(inputStr, TTF, 20);
 	blockedDayLabel->setPosition(blockedDayBox->getPosition());
 	blockedDayLabel->setColor(ccc3(0, 0, 0));
+	accountLabels->pushBack(blockedDayLabel);
 	addChild(blockedDayLabel);
 
 	// 力格 积己.
@@ -243,17 +262,17 @@ bool TabAccount::drawData()
 	battleTagTitle->setPosition(battleTagBox->getPosition() + Vec2(-battleTagBox->getContentSize().width / 2, 35));
 	battleTagTitle->setAnchorPoint(ccp(0, 0.5f));
 	addChild(battleTagTitle);
-	
+
 	auto nameTitle = Label::createWithTTF("Name", TTF, 20);
 	nameTitle->setPosition(nameBox->getPosition() + Vec2(-nameBox->getContentSize().width / 2, 35));
 	nameTitle->setAnchorPoint(ccp(0, 0.5f));
 	addChild(nameTitle);
-	
+
 	auto emailTitle = Label::createWithTTF("E-mail", TTF, 20);
 	emailTitle->setPosition(emailBox->getPosition() + Vec2(-emailBox->getContentSize().width / 2, 35));
 	emailTitle->setAnchorPoint(ccp(0, 0.5f));
 	addChild(emailTitle);
-	
+
 	auto regionTitle = Label::createWithTTF("Region", TTF, 20);
 	regionTitle->setPosition(regionBox->getPosition() + Vec2(-regionBox->getContentSize().width / 2, 35));
 	regionTitle->setAnchorPoint(ccp(0, 0.5f));
@@ -272,21 +291,25 @@ bool TabAccount::drawData()
 	auto idTitle = Label::createWithTTF("Id", TTF, 20);
 	idTitle->setPosition(Vec2(wideBox->getPosition().x - wideBox->getContentSize().width / 2 + idTitle->getContentSize().width / 2 + 20,
 		wideBox->getPosition().y + wideBox->getContentSize().height / 2 - idTitle->getContentSize().height / 2 - 15));
+	accountLabels->pushBack(idTitle);
 	addChild(idTitle);
 
 	auto classTitle = Label::createWithTTF("class", TTF, 20);
 	classTitle->setPosition(idTitle->getPosition() + Vec2(100, 0));
+	accountLabels->pushBack(classTitle);
 	addChild(classTitle);
 
 	auto playtimeTitle = Label::createWithTTF("playtime", TTF, 20);
 	playtimeTitle->setPosition(classTitle->getPosition() + Vec2(150, 0));
+	accountLabels->pushBack(playtimeTitle);
 	addChild(playtimeTitle);
 
 	auto levelTitle = Label::createWithTTF("level", TTF, 20);
 	levelTitle->setPosition(playtimeTitle->getPosition() + Vec2(150, 0));
+	accountLabels->pushBack(levelTitle);
 	addChild(levelTitle);
 
-	
+
 	vector<character*>::iterator iter = my_characters->begin();
 	for (int i = 0; ; ++i)
 	{
@@ -301,22 +324,26 @@ bool TabAccount::drawData()
 		auto idLabel = Label::createWithTTF(buf, TTF, 20);
 		idLabel->setColor(ccc3(255, 0, 0));
 		idLabel->setPosition(idTitle->getPosition() - Vec2(0, 50 * (i + 1)));
+		accountLabels->pushBack(idLabel);
 		addChild(idLabel);
 
 		auto classLabel = Label::createWithTTF(my_characters->at(i)->classType, TTF, 20);
 		classLabel->setColor(ccc3(255, 0, 0));
 		classLabel->setPosition(classTitle->getPosition() - Vec2(0, 50 * (i + 1)));
+		accountLabels->pushBack(classLabel);
 		addChild(classLabel);
 
 		auto playtimeLabel = Label::createWithTTF(my_characters->at(i)->playTime, TTF, 20);
 		playtimeLabel->setColor(ccc3(255, 0, 0));
 		playtimeLabel->setPosition(playtimeTitle->getPosition() - Vec2(0, 50 * (i + 1)));
+		accountLabels->pushBack(playtimeLabel);
 		addChild(playtimeLabel);
 
 		sprintf(buf, "%d", my_characters->at(i)->level);
 		auto levelLabel = Label::createWithTTF(buf, TTF, 20);
 		levelLabel->setColor(ccc3(255, 0, 0));
 		levelLabel->setPosition(levelTitle->getPosition() - Vec2(0, 50 * (i + 1)));
+		accountLabels->pushBack(levelLabel);
 		addChild(levelLabel);
 
 
@@ -324,6 +351,7 @@ bool TabAccount::drawData()
 		if (iter == my_characters->end()) break;
 	}
 
+	setIsNeedRefresh(true);
 	return true;
 
 }

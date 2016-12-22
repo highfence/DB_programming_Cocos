@@ -38,7 +38,8 @@ public:
 	CC_SYNTHESIZE(MenuItemImage*, m_pFindButton, FindButton);
 	CC_SYNTHESIZE(Menu*, m_pButtonMenu, ButtonMenu);
 	CC_SYNTHESIZE(bool, m_CallFlag, CallFlag);
-	CC_SYNTHESIZE(int, m_CallCharacterId, CallCharacterId);
+	CC_SYNTHESIZE(bool, m_IsCharaterTabCalled, IsCharacterTabCalled);
+	CC_SYNTHESIZE(bool, m_IsNeedRefresh, IsNeedRefresh);
 
 	std::string Character_id;
 	std::string CharacterName;
@@ -47,7 +48,6 @@ public:
 	int CharacterQuery();
 	void deleteNulls(char*, int);
 	void gotoItemStatus(Ref*, int);
-	void GetSellectedWithCharacterId(int);
 
 	character_s* my_character;
 	vector<item*>* my_items;

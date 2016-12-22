@@ -36,6 +36,7 @@ public:
 	CC_SYNTHESIZE(Menu*, m_pButtonMenu, ButtonMenu);
 	CC_SYNTHESIZE(bool, m_CallFlag, CallFlag);
 	CC_SYNTHESIZE(int, m_CallCharacterId, CallCharacterId);
+	CC_SYNTHESIZE(bool, m_IsNeedRefresh, IsNeedRefresh);
 
 	std::string BattleTag;
 	std::string AccountName;
@@ -47,5 +48,6 @@ public:
 
 	account* my_account;
 	std::vector<character*>* my_characters;
+	cocos2d::Vector<cocos2d::Label*>* accountLabels;
 };
 
